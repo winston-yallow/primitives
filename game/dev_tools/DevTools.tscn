@@ -1,0 +1,216 @@
+[gd_scene load_steps=7 format=2]
+
+[ext_resource path="res://dev_tools/DevTools.gd" type="Script" id=1]
+[ext_resource path="res://dev_tools/DevTools.png" type="Texture" id=2]
+[ext_resource path="res://dev_tools/text_helper.gd" type="Script" id=3]
+[ext_resource path="res://dev_tools/DevTools.theme" type="Theme" id=4]
+
+[sub_resource type="Shader" id=1]
+code = "shader_type canvas_item;
+
+void fragment() {
+    vec2 A = abs((UV * 2.0) - 1.0);
+    float avg = (A.x + A.y) * 0.5;
+    COLOR.a = max(0.0, pow(avg, 4.0) - 0.25);
+}"
+
+[sub_resource type="ShaderMaterial" id=2]
+shader = SubResource( 1 )
+
+[node name="DevTools" type="Control"]
+pause_mode = 2
+anchor_right = 1.0
+anchor_bottom = 1.0
+script = ExtResource( 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="TimeVisualizer" type="ColorRect" parent="."]
+visible = false
+material = SubResource( 2 )
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color( 0, 0.164706, 0.360784, 1 )
+
+[node name="InfoBG" type="ColorRect" parent="."]
+anchor_left = 1.0
+anchor_right = 1.0
+margin_left = -300.0
+margin_bottom = 150.0
+color = Color( 0, 0, 0, 0.54902 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Text" type="Label" parent="InfoBG"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 10.0
+margin_top = 10.0
+margin_right = -10.0
+margin_bottom = -10.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="SettingsBG" type="ColorRect" parent="."]
+anchor_bottom = 1.0
+margin_right = 296.0
+color = Color( 0, 0, 0, 0.686275 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Scroll" type="ScrollContainer" parent="SettingsBG"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 20.0
+margin_top = 20.0
+margin_right = -20.0
+margin_bottom = -20.0
+scroll_horizontal_enabled = false
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="VBox" type="VBoxContainer" parent="SettingsBG/Scroll"]
+margin_right = 256.0
+margin_bottom = 324.0
+
+[node name="TitleImage" type="TextureRect" parent="SettingsBG/Scroll/VBox"]
+margin_right = 256.0
+margin_bottom = 64.0
+texture = ExtResource( 2 )
+
+[node name="--- 01 ---" type="HSeparator" parent="SettingsBG/Scroll/VBox"]
+margin_top = 68.0
+margin_right = 256.0
+margin_bottom = 72.0
+
+[node name="TimeLabel" type="Label" parent="SettingsBG/Scroll/VBox"]
+margin_top = 76.0
+margin_right = 256.0
+margin_bottom = 90.0
+text = "TIME"
+
+[node name="TimeValue" type="Label" parent="SettingsBG/Scroll/VBox"]
+margin_top = 94.0
+margin_right = 256.0
+margin_bottom = 108.0
+text = "0.1"
+script = ExtResource( 3 )
+
+[node name="HSlider" type="HSlider" parent="SettingsBG/Scroll/VBox"]
+margin_top = 112.0
+margin_right = 256.0
+margin_bottom = 128.0
+theme = ExtResource( 4 )
+max_value = 3.0
+step = 0.1
+value = 0.1
+
+[node name="--- 02 ---" type="HSeparator" parent="SettingsBG/Scroll/VBox"]
+margin_top = 132.0
+margin_right = 256.0
+margin_bottom = 136.0
+
+[node name="DisplayLabel" type="Label" parent="SettingsBG/Scroll/VBox"]
+margin_top = 140.0
+margin_right = 256.0
+margin_bottom = 154.0
+text = "DISPLAY"
+
+[node name="FPS" type="HSplitContainer" parent="SettingsBG/Scroll/VBox"]
+margin_top = 158.0
+margin_right = 256.0
+margin_bottom = 182.0
+dragger_visibility = 2
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="CheckBox" type="CheckBox" parent="SettingsBG/Scroll/VBox/FPS"]
+margin_right = 24.0
+margin_bottom = 24.0
+theme = ExtResource( 4 )
+
+[node name="Label" type="Label" parent="SettingsBG/Scroll/VBox/FPS"]
+margin_left = 24.0
+margin_top = 5.0
+margin_right = 256.0
+margin_bottom = 19.0
+text = "FPS"
+
+[node name="Memory" type="HSplitContainer" parent="SettingsBG/Scroll/VBox"]
+margin_top = 186.0
+margin_right = 256.0
+margin_bottom = 210.0
+dragger_visibility = 2
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="CheckBox" type="CheckBox" parent="SettingsBG/Scroll/VBox/Memory"]
+margin_right = 24.0
+margin_bottom = 24.0
+theme = ExtResource( 4 )
+
+[node name="Label" type="Label" parent="SettingsBG/Scroll/VBox/Memory"]
+margin_left = 24.0
+margin_top = 5.0
+margin_right = 256.0
+margin_bottom = 19.0
+text = "Memory"
+
+[node name="Timescale" type="HSplitContainer" parent="SettingsBG/Scroll/VBox"]
+margin_top = 214.0
+margin_right = 256.0
+margin_bottom = 238.0
+dragger_visibility = 2
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="CheckBox" type="CheckBox" parent="SettingsBG/Scroll/VBox/Timescale"]
+margin_right = 24.0
+margin_bottom = 24.0
+theme = ExtResource( 4 )
+
+[node name="Label" type="Label" parent="SettingsBG/Scroll/VBox/Timescale"]
+margin_left = 24.0
+margin_top = 5.0
+margin_right = 256.0
+margin_bottom = 19.0
+text = "Time Scale"
+
+[node name="--- END ---" type="HSeparator" parent="SettingsBG/Scroll/VBox"]
+margin_top = 242.0
+margin_right = 256.0
+margin_bottom = 246.0
+
+[node name="Resume" type="Button" parent="SettingsBG/Scroll/VBox"]
+margin_top = 250.0
+margin_right = 256.0
+margin_bottom = 272.0
+theme = ExtResource( 4 )
+text = " Resume "
+
+[node name="Reload" type="Button" parent="SettingsBG/Scroll/VBox"]
+margin_top = 276.0
+margin_right = 256.0
+margin_bottom = 298.0
+theme = ExtResource( 4 )
+text = " Reload Current Scene"
+
+[node name="Exit" type="Button" parent="SettingsBG/Scroll/VBox"]
+margin_top = 302.0
+margin_right = 256.0
+margin_bottom = 324.0
+theme = ExtResource( 4 )
+text = " Exit Game"
+[connection signal="value_changed" from="SettingsBG/Scroll/VBox/HSlider" to="SettingsBG/Scroll/VBox/TimeValue" method="update_text"]
+[connection signal="value_changed" from="SettingsBG/Scroll/VBox/HSlider" to="." method="set_timescale"]
+[connection signal="button_up" from="SettingsBG/Scroll/VBox/Resume" to="." method="disable"]
+[connection signal="button_up" from="SettingsBG/Scroll/VBox/Reload" to="." method="reload_scene"]
+[connection signal="button_up" from="SettingsBG/Scroll/VBox/Exit" to="." method="exit_game"]

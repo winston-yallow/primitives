@@ -8,9 +8,26 @@
 
 config_version=4
 
-_global_script_classes=[  ]
+_global_script_classes=[ {
+"base": "RemoteValue",
+"class": "RemoteFunc",
+"language": "GDScript",
+"path": "res://dev_tools/RemoteFunc.gd"
+}, {
+"base": "RemoteValue",
+"class": "RemoteProp",
+"language": "GDScript",
+"path": "res://dev_tools/RemoteProp.gd"
+}, {
+"base": "Reference",
+"class": "RemoteValue",
+"language": "GDScript",
+"path": "res://dev_tools/RemoteValue.gd"
+} ]
 _global_script_class_icons={
-
+"RemoteFunc": "",
+"RemoteProp": "",
+"RemoteValue": ""
 }
 
 [application]
@@ -18,6 +35,10 @@ _global_script_class_icons={
 config/name="Primitives"
 run/main_scene="res://levels/00_Test.tscn"
 config/icon="res://icon.png"
+
+[autoload]
+
+DevTools="*res://dev_tools/DevTools.tscn"
 
 [rendering]
 
