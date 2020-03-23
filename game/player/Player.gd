@@ -5,7 +5,9 @@ export var speed := 5.0
 
 
 func _ready() -> void:
-    DevTools.add_remote_value(RemoteProp.new(self, "linear_velocity"))
+    DevTools.add_remote_value(
+        RemoteProp.new(self, 'linear_velocity', ['length', 'round'])
+    )
 
 
 func _physics_process(delta: float) -> void:
