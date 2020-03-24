@@ -95,7 +95,7 @@ func _integrate_forces(state: PhysicsDirectBodyState) -> void:
 
 
 func on_detection(other: Area):
-    if other.is_in_group('magnets'):
+    if other.is_in_group('magnets') and current_state == STATE.NORMAL:
         current_state = STATE.TRANSITION_IN
         transition_target = other.global_transform
         transition_origin = global_transform
