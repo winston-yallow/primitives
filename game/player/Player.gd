@@ -31,8 +31,6 @@ func _ready() -> void:
     DevTools.add_remote_value(
         RemoteProp.new(self, 'linear_velocity', ['length', 'round'])
     )
-    DevTools.add_remote_value(RemoteProp.new(self, 'linear_velocity'))
-    DevTools.add_remote_value(RemoteProp.new(self, 'target_rotation'))
 
 
 func _input(event: InputEvent) -> void:
