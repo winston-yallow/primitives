@@ -6,12 +6,12 @@
 [sub_resource type="PhysicsMaterial" id=1]
 friction = 0.0
 
-[sub_resource type="ConvexPolygonShape" id=2]
-margin = 0.003
-points = PoolVector3Array( -0.259808, -0.1, 0.198146, 0.259808, -0.1, 0.198146, 1.78814e-08, -0.1, -0.251854, -0.259808, 0.1, 0.198146, 1.78814e-08, 0.1, -0.251854, 0.259808, 0.1, 0.198146, 0.259808, 0.1, 0.198146, 1.78814e-08, -0.1, -0.251854, 0.259808, -0.1, 0.198146, 0.259808, 0.1, 0.198146, 1.78814e-08, 0.1, -0.251854, 1.78814e-08, -0.1, -0.251854, -0.259808, 0.1, 0.198146, 0.259808, -0.1, 0.198146, -0.259808, -0.1, 0.198146, -0.259808, 0.1, 0.198146, 0.259808, 0.1, 0.198146, 0.259808, -0.1, 0.198146, 1.78814e-08, 0.1, -0.251854, -0.259808, -0.1, 0.198146, 1.78814e-08, -0.1, -0.251854, 1.78814e-08, 0.1, -0.251854, -0.259808, 0.1, 0.198146, -0.259808, -0.1, 0.198146 )
+[sub_resource type="CylinderShape" id=4]
+radius = 0.278196
+height = 0.2
 
 [sub_resource type="SphereShape" id=3]
-radius = 0.364243
+radius = 0.197953
 
 [node name="Player" type="RigidBody"]
 physics_material_override = SubResource( 1 )
@@ -30,10 +30,11 @@ mesh = ExtResource( 1 )
 material/0 = null
 
 [node name="CollisionShape" type="CollisionShape" parent="."]
-transform = Transform( -1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 0, 0, 0 )
-shape = SubResource( 2 )
+transform = Transform( -1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 0, 0, -0.0177527 )
+shape = SubResource( 4 )
 
 [node name="Detector" type="Area" parent="."]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.0177527 )
 
 [node name="CollisionShape" type="CollisionShape" parent="Detector"]
 shape = SubResource( 3 )
