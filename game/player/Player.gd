@@ -8,8 +8,9 @@ enum STATE {
     TRANSITION_OUT  #  moving back to normal mode
 }
 
-export var speed := 5.0
-export var transitions := 5.0
+export var speed := 6.0
+export var transitions := 8.0
+export var release_force := 2.5
 
 var current_state: int = STATE.NORMAL
 var transition_target: Transform
@@ -25,6 +26,11 @@ func _ready() -> void:
         RemoteProp.new(self, 'linear_velocity', ['length', 'round'])
     )
     DevTools.add_remote_value(RemoteProp.new(self, 'linear_velocity'))
+
+
+func _input(event: InputEvent) -> void:
+    if event.is_action_pressed('reappear') and current_state == STATE.HIDDEN:
+        current_state = STATE.TRANSITION_OUT
 
 
 func _integrate_forces(state: PhysicsDirectBodyState) -> void:
@@ -46,6 +52,7 @@ func _integrate_forces(state: PhysicsDirectBodyState) -> void:
         state.add_central_force(clamped(direction, 1) * speed)
     
     elif current_state == STATE.TRANSITION_IN:
+        
         if mode != MODE_KINEMATIC:
             mode = MODE_KINEMATIC
         transition_fraction += state.step * transition_speed
@@ -56,6 +63,12 @@ func _integrate_forces(state: PhysicsDirectBodyState) -> void:
         )
         if transition_fraction == 1:
             current_state = STATE.HIDDEN
+    
+    elif current_state == STATE.TRANSITION_OUT:
+        # TODO: Prevent player movement until completely detached from wall
+        mode = MODE_RIGID
+        state.apply_central_impulse(Vector3.BACK * release_force)
+        current_state = STATE.NORMAL
 
 
 func on_detection(other: Area):
