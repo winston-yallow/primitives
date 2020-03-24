@@ -50,11 +50,7 @@ func _integrate_forces(state: PhysicsDirectBodyState) -> void:
         direction.x -= ease(Input.get_action_strength('game_right'), input_easing)
         
         if direction:
-            var a := Vector3.FORWARD
-            var b := direction
-            var dot := a.x * b.x + (-a.z) * (-b.z)
-            var det := a.x * (-b.z) - (-a.z) * b.x
-            target_rotation = atan2(det, dot)
+            target_rotation = vec3_to_rad(direction)
         
         var current_rotation := state.transform.basis.get_euler().y
         var new_rotation := lerp_angle(
@@ -77,6 +73,7 @@ func _integrate_forces(state: PhysicsDirectBodyState) -> void:
         
         if mode != MODE_KINEMATIC:
             mode = MODE_KINEMATIC
+        
         transition_fraction += state.step * transition_speed
         transition_fraction = min(1, transition_fraction)
         state.transform = transition_src.interpolate_with(
@@ -90,7 +87,9 @@ func _integrate_forces(state: PhysicsDirectBodyState) -> void:
     elif current_state == STATE.TRANSITION_OUT:
         # TODO: Prevent player movement until completely detached from wall
         mode = MODE_RIGID
-        state.apply_central_impulse(Vector3.BACK * release_force)
+        var direction := transition_spot.global_transform.basis.z
+        target_rotation = vec3_to_rad(direction)
+        state.apply_central_impulse(direction * release_force)
         current_state = STATE.NORMAL
         transition_spot.set_player_attached(self, false)
 
@@ -105,6 +104,12 @@ func on_detection(other: Area):
         transition_speed = transition_time_scale * transition_dst.origin.distance_to(
             transition_src.origin
         )
+
+
+func vec3_to_rad(vec3: Vector3):
+    var dot := Vector3.FORWARD.x * vec3.x + (-Vector3.FORWARD.z) * (-vec3.z)
+    var det := Vector3.FORWARD.x * (-vec3.z) - (-Vector3.FORWARD.z) * vec3.x
+    return atan2(det, dot)
 
 
 func clamped(vec3: Vector3, length: float) -> Vector3:
