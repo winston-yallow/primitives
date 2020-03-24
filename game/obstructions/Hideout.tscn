@@ -13,7 +13,7 @@ material/0 = null
 [node name="PlayerSpot" type="Area" parent="." index="1" groups=[
 "magnets",
 ]]
-transform = Transform( -1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 0, 0, 0.344317 )
+transform = Transform( 1, 0, 1.74846e-07, 0, 1, 0, -1.74846e-07, 0, 1, 0, 0, 0.344317 )
 
 [node name="CollisionShape" type="CollisionShape" parent="PlayerSpot" index="0"]
 shape = SubResource( 1 )

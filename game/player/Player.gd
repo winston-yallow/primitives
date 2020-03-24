@@ -53,7 +53,7 @@ func _integrate_forces(state: PhysicsDirectBodyState) -> void:
             var b := direction
             var dot := a.x * b.x + (-a.z) * (-b.z)
             var det := a.x * (-b.z) - (-a.z) * b.x
-            target_rotation = atan2(det, dot) + PI  # model is rotated by 180°
+            target_rotation = atan2(det, dot)
         
         var current_rotation := state.transform.basis.get_euler().y
         var new_rotation := lerp_angle(
