@@ -13,18 +13,13 @@ func _ready() -> void:
 func _physics_process(delta: float) -> void:
     
     var direction := Vector3()
-    
-    if Input.is_action_pressed("ui_up"):
-        direction.z += 1
-    if Input.is_action_pressed("ui_down"):
-        direction.z -= 1
-    if Input.is_action_pressed("ui_left"):
-        add_torque(Vector3.UP * 0.2)
-    if Input.is_action_pressed("ui_right"):
-        add_torque(Vector3.DOWN * 0.2)
+    direction.z += Input.get_action_strength('game_forward')
+    direction.z -= Input.get_action_strength('game_backward')
+    direction.x += Input.get_action_strength('game_left')
+    direction.x -= Input.get_action_strength('game_right')
     
     add_central_force(
-        global_transform.basis.xform(direction.normalized() * speed)
+        global_transform.basis.xform(clamped(direction, 1) * speed)
     )
 
 
