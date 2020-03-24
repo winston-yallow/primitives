@@ -9,6 +9,11 @@
 config_version=4
 
 _global_script_classes=[ {
+"base": "Area",
+"class": "MagneticPlayerSpot",
+"language": "GDScript",
+"path": "res://obstructions/PlayerSpot.gd"
+}, {
 "base": "RemoteValue",
 "class": "RemoteFunc",
 "language": "GDScript",
@@ -25,6 +30,7 @@ _global_script_classes=[ {
 "path": "res://dev_tools/RemoteValue.gd"
 } ]
 _global_script_class_icons={
+"MagneticPlayerSpot": "",
 "RemoteFunc": "",
 "RemoteProp": "",
 "RemoteValue": ""

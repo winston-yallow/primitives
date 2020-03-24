@@ -2,18 +2,10 @@
 
 [ext_resource path="res://obstructions/BaseObstruction.tscn" type="PackedScene" id=1]
 [ext_resource path="res://obstructions/hideout.mesh" type="ArrayMesh" id=2]
-
-[sub_resource type="SphereShape" id=1]
-radius = 0.345053
+[ext_resource path="res://obstructions/PlayerSpot.tscn" type="PackedScene" id=3]
 
 [node name="Hideout" instance=ExtResource( 1 )]
 mesh = ExtResource( 2 )
 material/0 = null
 
-[node name="PlayerSpot" type="Area" parent="." index="1" groups=[
-"magnets",
-]]
-transform = Transform( 1, 0, 1.74846e-07, 0, 1, 0, -1.74846e-07, 0, 1, 0, 0, 0.302 )
-
-[node name="CollisionShape" type="CollisionShape" parent="PlayerSpot" index="0"]
-shape = SubResource( 1 )
+[node name="MagneticPlayerSpot" parent="." index="1" instance=ExtResource( 3 )]

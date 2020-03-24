@@ -17,8 +17,9 @@ export var release_force := 4.5
 
 var current_state: int = STATE.NORMAL
 
-var transition_target: Transform
-var transition_origin: Transform
+var transition_spot: MagneticPlayerSpot
+var transition_dst: Transform
+var transition_src: Transform
 var transition_speed: float
 var transition_fraction: float
 
@@ -78,28 +79,31 @@ func _integrate_forces(state: PhysicsDirectBodyState) -> void:
             mode = MODE_KINEMATIC
         transition_fraction += state.step * transition_speed
         transition_fraction = min(1, transition_fraction)
-        state.transform = transition_origin.interpolate_with(
-            transition_target,
+        state.transform = transition_src.interpolate_with(
+            transition_dst,
             transition_fraction
         )
         if transition_fraction == 1:
             current_state = STATE.HIDDEN
+            transition_spot.set_player_attached(self, true)
     
     elif current_state == STATE.TRANSITION_OUT:
         # TODO: Prevent player movement until completely detached from wall
         mode = MODE_RIGID
         state.apply_central_impulse(Vector3.BACK * release_force)
         current_state = STATE.NORMAL
+        transition_spot.set_player_attached(self, false)
 
 
 func on_detection(other: Area):
-    if other.is_in_group('magnets') and current_state == STATE.NORMAL:
+    if other is MagneticPlayerSpot and current_state == STATE.NORMAL:
         current_state = STATE.TRANSITION_IN
-        transition_target = other.global_transform
-        transition_origin = global_transform
+        transition_spot = other
+        transition_dst = other.global_transform
+        transition_src = global_transform
         transition_fraction = 0
-        transition_speed = transition_time_scale * transition_target.origin.distance_to(
-            transition_origin.origin
+        transition_speed = transition_time_scale * transition_dst.origin.distance_to(
+            transition_src.origin
         )
 
 
