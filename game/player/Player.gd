@@ -13,6 +13,7 @@ export(float, EASE) var input_easing := 1.5
 export var speed := 5.0
 export var max_force := 32.0
 export var velocity_gain := 15.0
+export var rotation_speed := 9.0
 export var transition_time_scale := 25.0
 export var release_force := 5.2
 export var attach_angle := PI / 1.7
@@ -110,7 +111,7 @@ func _state_normal(state: PhysicsDirectBodyState, input_direction: Vector3) -> b
     var new_rotation := lerp_angle(
         current_rotation,
         target_rotation,
-        7 * state.step
+        rotation_speed * state.step
     )
     state.transform.basis = state.transform.basis.rotated(
         Vector3.UP,
