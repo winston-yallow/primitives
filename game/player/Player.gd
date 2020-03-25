@@ -19,6 +19,10 @@ export var release_force := 5.2
 export var attach_angle := PI / 1.7
 export var detach_angle := PI / 1.85
 
+var health_points := 100.0 setget _set_health_points, _get_health_points
+var health_per_dot := 10.0
+var health_decrease_rate := -0.0  # TODO: Decide if/how much time decreases over time
+
 var current_state: int = STATE.NORMAL
 
 var cached_input_direction := Vector3.FORWARD  # Ensured to be never (0, 0, 0)
@@ -44,6 +48,9 @@ func _ready() -> void:
     DevTools.add_remote_value(
         RemoteProp.new(self, 'linear_velocity', ['length', 'round'])
     )
+    DevTools.add_remote_value(
+        RemoteProp.new(self, 'health_points', ['round'])
+    )
 
 
 func _input(event: InputEvent) -> void:
@@ -59,6 +66,10 @@ func _input(event: InputEvent) -> void:
         
         elif current_state == STATE.TRANSITION_IN:
             detach_requested = true
+
+
+func _process(delta: float) -> void:
+    change_health_points(health_decrease_rate * delta)
 
 
 func _integrate_forces(state: PhysicsDirectBodyState) -> void:
@@ -164,9 +175,24 @@ func _state_transition_out(state: PhysicsDirectBodyState, _input_direction: Vect
     return true
 
 
+func _set_health_points(new_value: float) -> void:
+    health_points = clamp(new_value, 0.0, 100.0)
+
+
+func _get_health_points() -> float:
+    return clamp(health_points, 0.0, 100.0)
+
+
+func change_health_points(amount: float) -> void:
+    health_points = clamp(health_points + amount, 0.0, 100.0)
+
+
 func on_detection_found(other: Area):
     if other is MagneticPlayerSpot:
         detected_spots.append(other)
+    elif other is Dot:
+        other.eat()
+        change_health_points(health_per_dot)
 
 
 func on_detection_lost(other: Area):
