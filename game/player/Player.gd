@@ -102,7 +102,7 @@ func _integrate_forces(state: PhysicsDirectBodyState) -> void:
         if not transition_spot.locked:
             var detach_direction := transition_spot.global_transform.basis.z
             var angle := input_direction.angle_to(detach_direction)
-            if detach_requested or angle < detach_angle or not detach_direction:
+            if detach_requested or angle < detach_angle or not input_direction:
                 current_state = STATE.TRANSITION_OUT
     
     elif current_state == STATE.TRANSITION_OUT:
