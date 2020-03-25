@@ -9,7 +9,7 @@
 size = Vector2( 100, 100 )
 
 [sub_resource type="SpatialMaterial" id=2]
-albedo_color = Color( 0.776471, 0.776471, 0.776471, 1 )
+albedo_color = Color( 0.0901961, 0.0862745, 0.0980392, 1 )
 
 [node name="00_Test" type="Spatial"]
 

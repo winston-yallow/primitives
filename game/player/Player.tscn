@@ -1,10 +1,13 @@
-[gd_scene load_steps=6 format=2]
+[gd_scene load_steps=7 format=2]
 
 [ext_resource path="res://player/player.mesh" type="ArrayMesh" id=1]
 [ext_resource path="res://player/Player.gd" type="Script" id=2]
 
 [sub_resource type="PhysicsMaterial" id=1]
 friction = 0.0
+
+[sub_resource type="SpatialMaterial" id=4]
+albedo_color = Color( 0.462745, 0.462745, 0.462745, 1 )
 
 [sub_resource type="CylinderShape" id=2]
 margin = 0.004
@@ -25,6 +28,7 @@ angular_damp = 0.8
 script = ExtResource( 2 )
 
 [node name="MeshInstance" type="MeshInstance" parent="."]
+material_override = SubResource( 4 )
 mesh = ExtResource( 1 )
 material/0 = null
 

@@ -1,11 +1,15 @@
-[gd_scene load_steps=5 format=2]
+[gd_scene load_steps=6 format=2]
 
 [ext_resource path="res://obstructions/teleporter.mesh" type="ArrayMesh" id=1]
 [ext_resource path="res://obstructions/BaseObstruction.tscn" type="PackedScene" id=2]
 [ext_resource path="res://obstructions/PlayerSpot.tscn" type="PackedScene" id=3]
 [ext_resource path="res://obstructions/Teleporter.gd" type="Script" id=4]
 
+[sub_resource type="SpatialMaterial" id=1]
+albedo_color = Color( 0.462745, 0.462745, 0.462745, 1 )
+
 [node name="Teleporter" instance=ExtResource( 2 )]
+material_override = SubResource( 1 )
 mesh = ExtResource( 1 )
 material/0 = null
 script = ExtResource( 4 )
