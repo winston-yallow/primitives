@@ -18,6 +18,8 @@ export var release_force := 4.5
 
 var current_state: int = STATE.NORMAL
 
+var detach_requested = false
+
 var transition_spot: MagneticPlayerSpot
 var transition_dst: Transform
 var transition_src: Transform
@@ -37,10 +39,17 @@ func _ready() -> void:
 
 func _input(event: InputEvent) -> void:
     
-    if current_state == STATE.HIDDEN:
+    if event.is_action_pressed('reappear'):
         
-        if event.is_action_pressed('reappear') and not transition_spot.locked:
-            current_state = STATE.TRANSITION_OUT
+        if current_state == STATE.HIDDEN:
+            if transition_spot.locked:
+                detach_requested = true
+            else:
+                current_state = STATE.TRANSITION_OUT
+                detach_requested = false
+        
+        elif current_state == STATE.TRANSITION_IN:
+            detach_requested = true
 
 
 func _integrate_forces(state: PhysicsDirectBodyState) -> void:
@@ -88,6 +97,10 @@ func _integrate_forces(state: PhysicsDirectBodyState) -> void:
             current_state = STATE.HIDDEN
             transition_spot.set_object_attached(self, true)
     
+    elif current_state == STATE.HIDDEN:
+        if detach_requested and not transition_spot.locked:
+            current_state = STATE.TRANSITION_OUT
+    
     elif current_state == STATE.TRANSITION_OUT:
         # TODO: Prevent player movement until completely detached from wall
         mode = MODE_RIGID
@@ -108,6 +121,11 @@ func on_detection(other: Area):
         transition_speed = transition_time_scale * transition_dst.origin.distance_to(
             transition_src.origin
         )
+        detach_requested = false
+
+
+func request_detach():
+    detach_requested = true
 
 
 func vec3_to_rad(vec3: Vector3):
