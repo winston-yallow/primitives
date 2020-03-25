@@ -30,12 +30,16 @@ var transition_src: Transform
 var transition_speed: float
 var transition_fraction: float
 
+var detected_spots := []
+
 onready var target_rotation := global_transform.basis.get_euler().y
 
 
 func _ready() -> void:
     # warning-ignore:return_value_discarded
-    $Detector.connect('area_entered', self, 'on_detection')
+    $Detector.connect('area_entered', self, 'on_detection_found')
+    # warning-ignore:return_value_discarded
+    $Detector.connect('area_exited', self, 'on_detection_lost')
     DevTools.add_remote_value(
         RemoteProp.new(self, 'linear_velocity', ['length', 'round'])
     )
@@ -88,6 +92,21 @@ func _integrate_forces(state: PhysicsDirectBodyState) -> void:
         var force := clamped(velocity_gain * error, max_force)
         
         state.add_central_force(force)
+        
+        for spot in detected_spots:
+            var detach_direction: Vector3 = spot.global_transform.basis.z
+            var angle := last_input_direction.angle_to(detach_direction)
+            if angle > attach_angle:
+                current_state = STATE.TRANSITION_IN
+                transition_spot = spot
+                transition_dst = spot.global_transform
+                transition_src = global_transform
+                transition_fraction = 0
+                transition_speed = transition_time_scale * transition_dst.origin.distance_to(
+                    transition_src.origin
+                )
+                detach_requested = false
+                break
     
     elif current_state == STATE.TRANSITION_IN:
         
@@ -121,20 +140,16 @@ func _integrate_forces(state: PhysicsDirectBodyState) -> void:
         transition_spot.set_object_attached(self, false)
 
 
-func on_detection(other: Area):
-    if other is MagneticPlayerSpot and current_state == STATE.NORMAL:
-        var detach_direction := other.global_transform.basis.z
-        var angle := last_input_direction.angle_to(detach_direction)
-        if angle > attach_angle:
-            current_state = STATE.TRANSITION_IN
-            transition_spot = other
-            transition_dst = other.global_transform
-            transition_src = global_transform
-            transition_fraction = 0
-            transition_speed = transition_time_scale * transition_dst.origin.distance_to(
-                transition_src.origin
-            )
-            detach_requested = false
+func on_detection_found(other: Area):
+    if other is MagneticPlayerSpot:
+        detected_spots.append(other)
+
+
+func on_detection_lost(other: Area):
+    # "while" just as a safety measue in case it was accidentally added
+    # mote than once to the list
+    while other in detected_spots:
+        detected_spots.erase(other)
 
 
 func request_detach():
