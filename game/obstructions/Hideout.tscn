@@ -10,3 +10,4 @@ material/0 = null
 
 [node name="MagneticPlayerSpot" parent="." index="1" instance=ExtResource( 3 )]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.302 )
+no_locking = true

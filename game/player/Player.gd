@@ -36,8 +36,11 @@ func _ready() -> void:
 
 
 func _input(event: InputEvent) -> void:
-    if event.is_action_pressed('reappear') and current_state == STATE.HIDDEN:
-        current_state = STATE.TRANSITION_OUT
+    
+    if current_state == STATE.HIDDEN:
+        
+        if event.is_action_pressed('reappear') and not transition_spot.locked:
+            current_state = STATE.TRANSITION_OUT
 
 
 func _integrate_forces(state: PhysicsDirectBodyState) -> void:
@@ -83,7 +86,7 @@ func _integrate_forces(state: PhysicsDirectBodyState) -> void:
         )
         if transition_fraction == 1:
             current_state = STATE.HIDDEN
-            transition_spot.set_player_attached(self, true)
+            transition_spot.set_object_attached(self, true)
     
     elif current_state == STATE.TRANSITION_OUT:
         # TODO: Prevent player movement until completely detached from wall
@@ -92,7 +95,7 @@ func _integrate_forces(state: PhysicsDirectBodyState) -> void:
         target_rotation = vec3_to_rad(direction)
         state.apply_central_impulse(direction * release_force)
         current_state = STATE.NORMAL
-        transition_spot.set_player_attached(self, false)
+        transition_spot.set_object_attached(self, false)
 
 
 func on_detection(other: Area):
