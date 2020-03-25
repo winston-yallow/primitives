@@ -13,7 +13,7 @@ export(float, EASE) var input_easing := 1.5
 export var speed := 5.0
 export var max_force := 32.0
 export var velocity_gain := 15.0
-export var transition_time_scale := 20.0
+export var transition_time_scale := 25.0
 export var release_force := 5.2
 export var attach_angle := PI / 1.7
 export var detach_angle := PI / 1.85
@@ -86,6 +86,23 @@ func _integrate_forces(state: PhysicsDirectBodyState) -> void:
 
 func _state_normal(state: PhysicsDirectBodyState, input_direction: Vector3) -> bool:
     
+    for i in range(detected_spots.size()):
+        var spot: MagneticPlayerSpot = detected_spots[i]
+        var detach_direction := spot.global_transform.basis.z
+        var angle := cached_input_direction.angle_to(detach_direction)
+        if angle > attach_angle:
+            current_state = STATE.TRANSITION_IN
+            transition_spot = spot
+            transition_dst = spot.global_transform
+            transition_src = global_transform
+            transition_fraction = 0
+            transition_speed = transition_time_scale * transition_dst.origin.distance_to(
+                transition_src.origin
+            )
+            detach_requested = false
+            detected_spots.remove(i)  # Prevent reatachment directly after release
+            return false  # Request the state machine to re-evaluate for current frame
+    
     if input_direction:
         target_rotation = vec3_to_rad(input_direction)
     
@@ -105,23 +122,6 @@ func _state_normal(state: PhysicsDirectBodyState, input_direction: Vector3) -> b
     var force := clamped(velocity_gain * error, max_force)
     
     state.add_central_force(force)
-    
-    for i in range(detected_spots.size()):
-        var spot: MagneticPlayerSpot = detected_spots[i]
-        var detach_direction := spot.global_transform.basis.z
-        var angle := cached_input_direction.angle_to(detach_direction)
-        if angle > attach_angle:
-            current_state = STATE.TRANSITION_IN
-            transition_spot = spot
-            transition_dst = spot.global_transform
-            transition_src = global_transform
-            transition_fraction = 0
-            transition_speed = transition_time_scale * transition_dst.origin.distance_to(
-                transition_src.origin
-            )
-            detach_requested = false
-            detected_spots.remove(i)  # Prevent reatachment directly after release
-            break
     
     return true
 
