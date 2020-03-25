@@ -93,8 +93,9 @@ func _integrate_forces(state: PhysicsDirectBodyState) -> void:
         
         state.add_central_force(force)
         
-        for spot in detected_spots:
-            var detach_direction: Vector3 = spot.global_transform.basis.z
+        for i in range(detected_spots.size()):
+            var spot: MagneticPlayerSpot = detected_spots[i]
+            var detach_direction := spot.global_transform.basis.z
             var angle := last_input_direction.angle_to(detach_direction)
             if angle > attach_angle:
                 current_state = STATE.TRANSITION_IN
@@ -106,6 +107,7 @@ func _integrate_forces(state: PhysicsDirectBodyState) -> void:
                     transition_src.origin
                 )
                 detach_requested = false
+                detected_spots.remove(i)  # Prevent reatachment directly after release
                 break
     
     elif current_state == STATE.TRANSITION_IN:
