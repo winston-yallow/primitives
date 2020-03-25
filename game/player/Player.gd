@@ -15,6 +15,7 @@ export var max_force := 28.0
 export var velocity_gain := 10.0
 export var transition_time_scale := 20.0
 export var release_force := 4.5
+export var detach_angle := PI / 1.8
 
 var current_state: int = STATE.NORMAL
 
@@ -54,16 +55,16 @@ func _input(event: InputEvent) -> void:
 
 func _integrate_forces(state: PhysicsDirectBodyState) -> void:
     
-    if current_state == STATE.NORMAL:
+    var input_direction := Vector3()
+    input_direction.z += ease(Input.get_action_strength('game_forward'), input_easing)
+    input_direction.z -= ease(Input.get_action_strength('game_backward'), input_easing)
+    input_direction.x += ease(Input.get_action_strength('game_left'), input_easing)
+    input_direction.x -= ease(Input.get_action_strength('game_right'), input_easing)
     
-        var direction := Vector3()
-        direction.z += ease(Input.get_action_strength('game_forward'), input_easing)
-        direction.z -= ease(Input.get_action_strength('game_backward'), input_easing)
-        direction.x += ease(Input.get_action_strength('game_left'), input_easing)
-        direction.x -= ease(Input.get_action_strength('game_right'), input_easing)
+    if current_state == STATE.NORMAL:
         
-        if direction:
-            target_rotation = vec3_to_rad(direction)
+        if input_direction:
+            target_rotation = vec3_to_rad(input_direction)
         
         var current_rotation := state.transform.basis.get_euler().y
         var new_rotation := lerp_angle(
@@ -76,7 +77,7 @@ func _integrate_forces(state: PhysicsDirectBodyState) -> void:
             new_rotation - current_rotation
         )
         
-        var desired := clamped(direction, 1) * speed
+        var desired := clamped(input_direction, 1) * speed
         var error := desired - state.linear_velocity
         var force := clamped(velocity_gain * error, max_force)
         
@@ -98,8 +99,11 @@ func _integrate_forces(state: PhysicsDirectBodyState) -> void:
             transition_spot.set_object_attached(self, true)
     
     elif current_state == STATE.HIDDEN:
-        if detach_requested and not transition_spot.locked:
-            current_state = STATE.TRANSITION_OUT
+        if not transition_spot.locked:
+            var detach_direction := transition_spot.global_transform.basis.z
+            var angle := input_direction.angle_to(detach_direction)
+            if detach_requested or angle < detach_angle or not detach_direction:
+                current_state = STATE.TRANSITION_OUT
     
     elif current_state == STATE.TRANSITION_OUT:
         # TODO: Prevent player movement until completely detached from wall
