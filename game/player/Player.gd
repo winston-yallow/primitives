@@ -20,7 +20,7 @@ export var detach_angle := PI / 1.85
 
 var current_state: int = STATE.NORMAL
 
-var last_input_direction := Vector3.FORWARD
+var cached_input_direction := Vector3.FORWARD  # Ensured to be never (0, 0, 0)
 
 var detach_requested = false
 
@@ -69,77 +69,98 @@ func _integrate_forces(state: PhysicsDirectBodyState) -> void:
     input_direction.x -= ease(Input.get_action_strength('game_right'), input_easing)
     
     if input_direction:
-        last_input_direction = input_direction
+        cached_input_direction = input_direction
     
-    if current_state == STATE.NORMAL:
-        
-        if input_direction:
-            target_rotation = vec3_to_rad(input_direction)
-        
-        var current_rotation := state.transform.basis.get_euler().y
-        var new_rotation := lerp_angle(
-            current_rotation,
-            target_rotation,
-            7 * state.step
-        )
-        state.transform.basis = state.transform.basis.rotated(
-            Vector3.UP,
-            new_rotation - current_rotation
-        )
-        
-        var desired := clamped(input_direction, 1) * speed
-        var error := desired - state.linear_velocity
-        var force := clamped(velocity_gain * error, max_force)
-        
-        state.add_central_force(force)
-        
-        for i in range(detected_spots.size()):
-            var spot: MagneticPlayerSpot = detected_spots[i]
-            var detach_direction := spot.global_transform.basis.z
-            var angle := last_input_direction.angle_to(detach_direction)
-            if angle > attach_angle:
-                current_state = STATE.TRANSITION_IN
-                transition_spot = spot
-                transition_dst = spot.global_transform
-                transition_src = global_transform
-                transition_fraction = 0
-                transition_speed = transition_time_scale * transition_dst.origin.distance_to(
-                    transition_src.origin
-                )
-                detach_requested = false
-                detected_spots.remove(i)  # Prevent reatachment directly after release
-                break
+    var next_frame := false
+    while not next_frame:
+        match current_state:
+            STATE.NORMAL:
+                next_frame = _state_normal(state, input_direction)
+            STATE.TRANSITION_IN:
+                next_frame = _state_transition_in(state, input_direction)
+            STATE.HIDDEN:
+                next_frame = _state_hidden(state, input_direction)
+            STATE.TRANSITION_OUT:
+                next_frame = _state_transition_out(state, input_direction)
+
+
+func _state_normal(state: PhysicsDirectBodyState, input_direction: Vector3) -> bool:
     
-    elif current_state == STATE.TRANSITION_IN:
-        
-        if mode != MODE_KINEMATIC:
-            mode = MODE_KINEMATIC
-        
-        transition_fraction += state.step * transition_speed
-        transition_fraction = min(1, transition_fraction)
-        state.transform = transition_src.interpolate_with(
-            transition_dst,
-            transition_fraction
-        )
-        if transition_fraction == 1:
-            current_state = STATE.HIDDEN
-            transition_spot.set_object_attached(self, true)
+    if input_direction:
+        target_rotation = vec3_to_rad(input_direction)
     
-    elif current_state == STATE.HIDDEN:
-        if not transition_spot.locked:
-            var detach_direction := transition_spot.global_transform.basis.z
-            var angle := input_direction.angle_to(detach_direction)
-            if detach_requested or angle < detach_angle or not input_direction:
-                current_state = STATE.TRANSITION_OUT
+    var current_rotation := state.transform.basis.get_euler().y
+    var new_rotation := lerp_angle(
+        current_rotation,
+        target_rotation,
+        7 * state.step
+    )
+    state.transform.basis = state.transform.basis.rotated(
+        Vector3.UP,
+        new_rotation - current_rotation
+    )
     
-    elif current_state == STATE.TRANSITION_OUT:
-        # TODO: Prevent player movement until completely detached from wall
-        mode = MODE_RIGID
-        var direction := transition_spot.global_transform.basis.z
-        target_rotation = vec3_to_rad(direction)
-        state.apply_central_impulse(direction * release_force)
-        current_state = STATE.NORMAL
-        transition_spot.set_object_attached(self, false)
+    var desired := clamped(input_direction, 1) * speed
+    var error := desired - state.linear_velocity
+    var force := clamped(velocity_gain * error, max_force)
+    
+    state.add_central_force(force)
+    
+    for i in range(detected_spots.size()):
+        var spot: MagneticPlayerSpot = detected_spots[i]
+        var detach_direction := spot.global_transform.basis.z
+        var angle := cached_input_direction.angle_to(detach_direction)
+        if angle > attach_angle:
+            current_state = STATE.TRANSITION_IN
+            transition_spot = spot
+            transition_dst = spot.global_transform
+            transition_src = global_transform
+            transition_fraction = 0
+            transition_speed = transition_time_scale * transition_dst.origin.distance_to(
+                transition_src.origin
+            )
+            detach_requested = false
+            detected_spots.remove(i)  # Prevent reatachment directly after release
+            break
+    
+    return true
+
+
+func _state_transition_in(state: PhysicsDirectBodyState, _input_direction: Vector3) -> bool:
+    if mode != MODE_KINEMATIC:
+        mode = MODE_KINEMATIC
+    transition_fraction += state.step * transition_speed
+    transition_fraction = min(1, transition_fraction)
+    state.transform = transition_src.interpolate_with(
+        transition_dst,
+        transition_fraction
+    )
+    if transition_fraction == 1:
+        current_state = STATE.HIDDEN
+        transition_spot.set_object_attached(self, true)
+    
+    return true
+
+
+func _state_hidden(_state: PhysicsDirectBodyState, input_direction: Vector3) -> bool:
+    if not transition_spot.locked:
+        var detach_direction := transition_spot.global_transform.basis.z
+        var angle := input_direction.angle_to(detach_direction)
+        if detach_requested or angle < detach_angle or not input_direction:
+            current_state = STATE.TRANSITION_OUT
+    
+    return true
+    
+func _state_transition_out(state: PhysicsDirectBodyState, _input_direction: Vector3) -> bool:
+    # TODO: Prevent player movement until completely detached from wall
+    mode = MODE_RIGID
+    var direction := transition_spot.global_transform.basis.z
+    target_rotation = vec3_to_rad(direction)
+    state.apply_central_impulse(direction * release_force)
+    current_state = STATE.NORMAL
+    transition_spot.set_object_attached(self, false)
+    
+    return true
 
 
 func on_detection_found(other: Area):
