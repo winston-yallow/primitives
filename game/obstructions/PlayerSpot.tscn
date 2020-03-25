@@ -2,8 +2,8 @@
 
 [ext_resource path="res://obstructions/PlayerSpot.gd" type="Script" id=1]
 
-[sub_resource type="SphereShape" id=1]
-radius = 0.345053
+[sub_resource type="SphereShape" id=2]
+radius = 0.36
 
 [node name="MagneticPlayerSpot" type="Area" groups=[
 "magnets",
@@ -11,4 +11,4 @@ radius = 0.345053
 script = ExtResource( 1 )
 
 [node name="CollisionShape" type="CollisionShape" parent="."]
-shape = SubResource( 1 )
+shape = SubResource( 2 )

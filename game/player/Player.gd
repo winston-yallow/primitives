@@ -15,9 +15,12 @@ export var max_force := 28.0
 export var velocity_gain := 10.0
 export var transition_time_scale := 20.0
 export var release_force := 4.5
+export var attach_angle := PI / 1.6
 export var detach_angle := PI / 1.8
 
 var current_state: int = STATE.NORMAL
+
+var last_input_direction := Vector3.FORWARD
 
 var detach_requested = false
 
@@ -60,6 +63,9 @@ func _integrate_forces(state: PhysicsDirectBodyState) -> void:
     input_direction.z -= ease(Input.get_action_strength('game_backward'), input_easing)
     input_direction.x += ease(Input.get_action_strength('game_left'), input_easing)
     input_direction.x -= ease(Input.get_action_strength('game_right'), input_easing)
+    
+    if input_direction:
+        last_input_direction = input_direction
     
     if current_state == STATE.NORMAL:
         
@@ -117,15 +123,18 @@ func _integrate_forces(state: PhysicsDirectBodyState) -> void:
 
 func on_detection(other: Area):
     if other is MagneticPlayerSpot and current_state == STATE.NORMAL:
-        current_state = STATE.TRANSITION_IN
-        transition_spot = other
-        transition_dst = other.global_transform
-        transition_src = global_transform
-        transition_fraction = 0
-        transition_speed = transition_time_scale * transition_dst.origin.distance_to(
-            transition_src.origin
-        )
-        detach_requested = false
+        var detach_direction := other.global_transform.basis.z
+        var angle := last_input_direction.angle_to(detach_direction)
+        if angle > attach_angle:
+            current_state = STATE.TRANSITION_IN
+            transition_spot = other
+            transition_dst = other.global_transform
+            transition_src = global_transform
+            transition_fraction = 0
+            transition_speed = transition_time_scale * transition_dst.origin.distance_to(
+                transition_src.origin
+            )
+            detach_requested = false
 
 
 func request_detach():
