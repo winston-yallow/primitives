@@ -11,12 +11,12 @@ enum STATE {
 
 export(float, EASE) var input_easing := 1.5
 export var speed := 5.0
-export var max_force := 28.0
-export var velocity_gain := 10.0
+export var max_force := 32.0
+export var velocity_gain := 15.0
 export var transition_time_scale := 20.0
-export var release_force := 4.5
-export var attach_angle := PI / 1.6
-export var detach_angle := PI / 1.8
+export var release_force := 5.2
+export var attach_angle := PI / 1.7
+export var detach_angle := PI / 1.85
 
 var current_state: int = STATE.NORMAL
 
