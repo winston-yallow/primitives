@@ -29,6 +29,7 @@ func on_tween_completed(_obj: Object, _key: NodePath):
 
 func on_attached(other: Spatial) -> void:
     if other is Player:
+        other.request_detach()
         # warning-ignore:return_value_discarded
         tween.interpolate_property(
             self,
