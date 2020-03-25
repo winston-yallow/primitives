@@ -1,4 +1,5 @@
 extends RigidBody
+class_name Player
 
 
 enum STATE {
