@@ -158,7 +158,7 @@ func _state_hidden(_state: PhysicsDirectBodyState, input_direction: Vector3) -> 
     if not transition_spot.locked:
         var detach_direction := transition_spot.global_transform.basis.z
         var angle := input_direction.angle_to(detach_direction)
-        if detach_requested or angle < detach_angle or not input_direction:
+        if detach_requested or (angle < detach_angle and input_direction):
             current_state = STATE.TRANSITION_OUT
     
     return true
