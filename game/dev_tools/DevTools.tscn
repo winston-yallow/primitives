@@ -13,6 +13,7 @@ void fragment() {
     float avg = (A.x + A.y) * 0.5;
     COLOR.a = max(0.0, pow(avg, 4.0) - 0.25);
 }"
+custom_defines = ""
 
 [sub_resource type="ShaderMaterial" id=2]
 shader = SubResource( 1 )
@@ -134,6 +135,7 @@ __meta__ = {
 margin_right = 24.0
 margin_bottom = 24.0
 theme = ExtResource( 4 )
+pressed = true
 
 [node name="Label" type="Label" parent="SettingsBG/Scroll/VBox/FPS"]
 margin_left = 24.0
@@ -209,8 +211,8 @@ margin_right = 256.0
 margin_bottom = 324.0
 theme = ExtResource( 4 )
 text = " Exit Game"
-[connection signal="value_changed" from="SettingsBG/Scroll/VBox/HSlider" to="SettingsBG/Scroll/VBox/TimeValue" method="update_text"]
 [connection signal="value_changed" from="SettingsBG/Scroll/VBox/HSlider" to="." method="set_timescale"]
+[connection signal="value_changed" from="SettingsBG/Scroll/VBox/HSlider" to="SettingsBG/Scroll/VBox/TimeValue" method="update_text"]
 [connection signal="button_up" from="SettingsBG/Scroll/VBox/Resume" to="." method="disable"]
 [connection signal="button_up" from="SettingsBG/Scroll/VBox/Reload" to="." method="reload_scene"]
 [connection signal="button_up" from="SettingsBG/Scroll/VBox/Exit" to="." method="exit_game"]
