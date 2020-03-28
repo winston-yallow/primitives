@@ -91,6 +91,13 @@ reappear={
  ]
 }
 
+[layer_names]
+
+3d_physics/layer_1="Player"
+3d_physics/layer_2="Obstructions"
+3d_physics/layer_3="Interactable"
+3d_physics/layer_4="Enemies"
+
 [rendering]
 
 quality/filters/msaa=2

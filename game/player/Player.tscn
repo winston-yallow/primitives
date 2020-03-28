@@ -18,6 +18,7 @@ height = 0.2
 radius = 0.197953
 
 [node name="Player" type="RigidBody"]
+collision_mask = 11
 physics_material_override = SubResource( 1 )
 can_sleep = false
 axis_lock_linear_y = true
@@ -38,6 +39,8 @@ shape = SubResource( 3 )
 
 [node name="Detector" type="Area" parent="."]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.0177527 )
+collision_layer = 0
+collision_mask = 4
 
 [node name="CollisionShape" type="CollisionShape" parent="Detector"]
 shape = SubResource( 4 )
