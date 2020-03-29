@@ -206,6 +206,10 @@ func request_detach():
     detach_requested = true
 
 
+func is_detectable() -> bool:
+    return current_state != STATE.HIDDEN
+
+
 func vec3_to_rad(vec3: Vector3):
     var dot := Vector3.FORWARD.x * vec3.x + (-Vector3.FORWARD.z) * (-vec3.z)
     var det := Vector3.FORWARD.x * (-vec3.z) - (-Vector3.FORWARD.z) * vec3.x
