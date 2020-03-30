@@ -49,7 +49,7 @@ func _ready() -> void:
 
 func _process(delta: float) -> void:
     
-    var state_changed := last_state == current_state
+    var state_changed := last_state != current_state
     last_state = current_state
     
     match current_state:
