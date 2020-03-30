@@ -132,8 +132,6 @@ func _state_return(delta: float, state_changed: bool) -> void:
     
     if home_pos.distance_squared_to(global_transform.origin) < 0.1:
         current_state = STATE.IDLE
-    else:
-        print(home_pos, global_transform.origin)
 
 
 func calculate_path(from: Vector3, to: Vector3):
