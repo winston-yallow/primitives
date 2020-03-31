@@ -14,11 +14,15 @@ export var velocity_gain := 8.0
 export var max_force := 16.0
 export var nav_path := NodePath()
 export var lookahead := 1.0
+export var search_min := 3.0
+export var search_max := 5.0
 
 var last_state: int = STATE.NONE
 var current_state: int = STATE.IDLE
 
 var path_curve: Curve3D
+
+var search_time: float
 
 var player_reachable := false
 var player: Player
@@ -33,6 +37,7 @@ var debug_indicator: SpatialMaterial
 
 
 func _ready() -> void:
+    randomize()
     nav = get_node(nav_path)
     target = global_transform.origin
     home_pos = global_transform.origin
@@ -114,8 +119,17 @@ func _state_follow(delta: float, state_changed: bool) -> void:
 
 
 func _state_search(delta: float, state_changed: bool) -> void:
-    # Skip this state for now
-    current_state = STATE.RETURN
+    
+    if state_changed:
+        search_time = rand_range(search_min, search_max)
+        print(search_time)
+    
+    search_time -= delta
+    
+    # Do nothing for now. TODO: Implement actual searching
+    
+    if search_time <= 0:
+        current_state = STATE.RETURN
 
 
 func _state_return(delta: float, state_changed: bool) -> void:
