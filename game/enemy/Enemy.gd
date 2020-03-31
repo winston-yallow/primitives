@@ -122,7 +122,6 @@ func _state_search(delta: float, state_changed: bool) -> void:
     
     if state_changed:
         search_time = rand_range(search_min, search_max)
-        print(search_time)
     
     search_time -= delta
     
