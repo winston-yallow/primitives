@@ -103,6 +103,7 @@ func _state_follow(delta: float, state_changed: bool) -> void:
     # state or when the player moved more than 0.5 units (=0.25 when squared)
     if state_changed or recalc_delta_squared > 0.25:
         path_curve = calculate_path(global_transform.origin, player_pos)
+        player_last_calc_pos = player_pos
         if not path_curve:
             path_curve = null
             current_state = STATE.SEARCH
