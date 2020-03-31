@@ -72,7 +72,7 @@ func _process(delta: float) -> void:
             _state_return(delta, state_changed)
 
 
-func _physics_process(delta: float) -> void:
+func _physics_process(_delta: float) -> void:
     
     # Check if the enemy can see the player:
     if player_reachable and current_state != STATE.FOLLOW:
@@ -95,11 +95,11 @@ func _integrate_forces(state: PhysicsDirectBodyState) -> void:
     add_central_force(force)
 
 
-func _state_idle(delta: float, state_changed: bool) -> void:
+func _state_idle(_delta: float, _state_changed: bool) -> void:
     pass
 
 
-func _state_follow(delta: float, state_changed: bool) -> void:
+func _state_follow(_delta: float, state_changed: bool) -> void:
     
     var player_pos := player.global_transform.origin
     var recalc_delta_squared := player_pos.distance_squared_to(player_last_calc_pos)
@@ -132,7 +132,7 @@ func _state_search(delta: float, state_changed: bool) -> void:
         current_state = STATE.RETURN
 
 
-func _state_return(delta: float, state_changed: bool) -> void:
+func _state_return(_delta: float, state_changed: bool) -> void:
     
     # Only calculate the path in the first frame of this state. The home position
     # will not change
