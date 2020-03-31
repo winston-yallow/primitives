@@ -295,22 +295,6 @@ nav_path = NodePath("../Navigation")
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 4.31229, 0, 3 )
 nav_path = NodePath("../Navigation")
 
-[node name="Enemy13" parent="." instance=ExtResource( 6 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 7.31229, 0, 2 )
-nav_path = NodePath("../Navigation")
-
-[node name="Enemy12" parent="." instance=ExtResource( 6 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 4.31229, 0, 0 )
-nav_path = NodePath("../Navigation")
-
-[node name="Enemy11" parent="." instance=ExtResource( 6 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -1.68771, 0, 4 )
-nav_path = NodePath("../Navigation")
-
-[node name="Enemy10" parent="." instance=ExtResource( 6 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 2.31229, 0, 2 )
-nav_path = NodePath("../Navigation")
-
 [node name="CameraTarget" type="Position3D" parent="."]
 transform = Transform( -1, -1.50996e-07, -6.60024e-15, 0, -4.37114e-08, 1, -1.50996e-07, 1, 4.37114e-08, 0, 10, 0 )
 
