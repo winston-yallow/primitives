@@ -104,6 +104,11 @@ func _state_follow(_delta: float, state_changed: bool) -> void:
     var player_pos := player.global_transform.origin
     var recalc_delta_squared := player_pos.distance_squared_to(player_last_calc_pos)
     
+    if not player.is_detectable():
+        path_curve = null
+        current_state = STATE.SEARCH
+        return
+    
     # Trigger a path recalculation if this is the first frame in this
     # state or when the player moved more than 0.5 units (=0.25 when squared)
     if state_changed or recalc_delta_squared > 0.25:
